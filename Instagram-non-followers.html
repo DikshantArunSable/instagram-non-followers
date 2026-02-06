@@ -13,6 +13,7 @@
       --muted: #94a3b8;
       --accent: #38bdf8;
       --danger: #f87171;
+      --success: #4ade80;
     }
 
     body {
@@ -24,7 +25,7 @@
     }
 
     .container {
-      max-width: 900px;
+      max-width: 1000px;
       margin: auto;
     }
 
@@ -66,18 +67,47 @@
     }
 
     .stats {
-      display: flex;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 12px;
-      margin-top: 12px;
-      flex-wrap: wrap;
+      margin-top: 16px;
     }
 
     .stat {
       background: #020617;
-      padding: 10px 14px;
-      border-radius: 8px;
+      padding: 14px;
+      border-radius: 10px;
       font-size: 14px;
       color: var(--muted);
+    }
+
+    .stat b {
+      display: block;
+      font-size: 22px;
+      margin-top: 4px;
+      color: var(--text);
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      padding: 8px 14px;
+      border-radius: 20px;
+      background: #020617;
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .tab.active {
+      background: var(--accent);
+      color: #000;
+      font-weight: 600;
     }
 
     ul {
@@ -111,6 +141,7 @@
       padding: 6px 10px;
       border-radius: 6px;
       font-size: 13px;
+      cursor: pointer;
     }
 
     footer {
@@ -125,8 +156,8 @@
 
 <div class="container">
 
-  <h1>Instagram Non-Followers</h1>
-  <p>Find who doesn’t follow you back — fully offline & safe.</p>
+  <h1>Instagram Followers Analyzer</h1>
+  <p>Privacy-first • No login • Runs 100% in your browser</p>
 
   <div class="card">
     <label>Upload <b>followers_1.html</b></label>
@@ -135,30 +166,35 @@
     <label>Upload <b>following.html</b></label>
     <input type="file" id="followingFile">
 
-    <button onclick="process()">Analyze</button>
+    <button onclick="analyze()">Analyze</button>
 
     <div class="stats" id="stats"></div>
   </div>
 
   <div class="card">
-    <h3>❌ Not following you back</h3>
-    <ul id="result"></ul>
+    <div class="tabs">
+      <div class="tab active" onclick="showTab('notBack')" id="tab-notBack">❌ Not following back</div>
+      <div class="tab" onclick="showTab('mutual')" id="tab-mutual">✅ Mutual followers</div>
+    </div>
+
+    <ul id="list"></ul>
   </div>
 
   <footer>
-    No login • No data stored • Runs fully in your browser
+    Your data never leaves your device • Safe for GitHub Pages
   </footer>
 
 </div>
 
 <script>
 let followersHTML, followingHTML;
+let data = { notBack: [], mutual: [] };
 
 document.getElementById('followersFile').onchange = e =>
-  readFile(e.target.files[0], data => followersHTML = data);
+  readFile(e.target.files[0], html => followersHTML = html);
 
 document.getElementById('followingFile').onchange = e =>
-  readFile(e.target.files[0], data => followingHTML = data);
+  readFile(e.target.files[0], html => followingHTML = html);
 
 function readFile(file, callback) {
   const reader = new FileReader();
@@ -168,40 +204,60 @@ function readFile(file, callback) {
 
 function extractUsernames(html) {
   const doc = new DOMParser().parseFromString(html, 'text/html');
+
   return [...doc.querySelectorAll('a')]
-    .map(a => a.textContent.trim())
+    .map(a => a.getAttribute('href') || a.textContent)
+    .map(v => v.trim())
+    .filter(Boolean)
+    .map(v => {
+      if (v.startsWith('http')) {
+        try {
+          const u = new URL(v);
+          return u.pathname.replace(/\//g, '').replace('_u', '');
+        } catch {
+          return null;
+        }
+      }
+      return v.replace(/\//g, '');
+    })
     .filter(Boolean);
 }
 
-function process() {
+function analyze() {
   if (!followersHTML || !followingHTML) {
-    alert("Upload both files");
+    alert("Please upload both files");
     return;
   }
 
   const followers = new Set(extractUsernames(followersHTML));
-  const following = extractUsernames(followingHTML);
+  const following = new Set(extractUsernames(followingHTML));
 
-  const notFollowingBack = following.filter(
-    u => !followers.has(u)
-  );
+  data.notBack = [...following].filter(u => !followers.has(u));
+  data.mutual = [...following].filter(u => followers.has(u));
 
   document.getElementById('stats').innerHTML = `
-    <div class="stat">Followers: <b>${followers.size}</b></div>
-    <div class="stat">Following: <b>${following.length}</b></div>
-    <div class="stat">Not following back: <b>${notFollowingBack.length}</b></div>
+    <div class="stat">Followers<b>${followers.size}</b></div>
+    <div class="stat">Following<b>${following.size}</b></div>
+    <div class="stat">Not following back<b style="color:var(--danger)">${data.notBack.length}</b></div>
+    <div class="stat">Mutual followers<b style="color:var(--success)">${data.mutual.length}</b></div>
   `;
 
-  const ul = document.getElementById('result');
+  showTab('notBack');
+}
+
+function showTab(type) {
+  document.getElementById('tab-notBack').classList.remove('active');
+  document.getElementById('tab-mutual').classList.remove('active');
+  document.getElementById('tab-' + type).classList.add('active');
+
+  const ul = document.getElementById('list');
   ul.innerHTML = "";
 
-  notFollowingBack.forEach(user => {
+  data[type].forEach(user => {
     const li = document.createElement('li');
     li.innerHTML = `
       <a href="https://instagram.com/${user}" target="_blank">${user}</a>
-      <button class="open" onclick="window.open('https://instagram.com/${user}', '_blank')">
-        Open
-      </button>
+      <button class="open" onclick="window.open('https://instagram.com/${user}','_blank')">Open</button>
     `;
     ul.appendChild(li);
   });
@@ -210,3 +266,4 @@ function process() {
 
 </body>
 </html>
+
