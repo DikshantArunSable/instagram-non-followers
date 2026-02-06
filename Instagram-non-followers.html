@@ -1,139 +1,92 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8" />
-<title>Instagram Followers Analyzer</title>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-
-<style>
-:root {
-  --bg:#0f172a; --card:#020617; --text:#e5e7eb;
-  --muted:#94a3b8; --accent:#38bdf8;
-  --danger:#f87171; --success:#4ade80;
-}
-body{margin:0;background:var(--bg);color:var(--text);
-font-family:system-ui;padding:20px}
-.container{max-width:1100px;margin:auto}
-.card{background:var(--card);padding:20px;border-radius:12px;margin-bottom:20px}
-button{background:var(--accent);border:none;padding:10px 14px;
-border-radius:8px;font-weight:600;cursor:pointer}
-button.secondary{background:#020617;color:var(--text);border:1px solid #334155}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:12px}
-.stat{background:#020617;padding:12px;border-radius:8px;color:var(--muted)}
-.stat b{display:block;font-size:22px;color:var(--text)}
-.tabs{display:flex;gap:8px;margin-bottom:10px}
-.tab{padding:8px 14px;border-radius:20px;background:#020617;cursor:pointer}
-.tab.active{background:var(--accent);color:#000;font-weight:600}
-.search{width:100%;padding:10px;border-radius:8px;border:none;margin-bottom:10px}
-ul{list-style:none;padding:0;margin:0}
-li{display:flex;align-items:center;justify-content:space-between;
-padding:8px 10px;border-bottom:1px solid #1e293b}
-a{color:var(--accent);text-decoration:none}
-.checkbox{margin-right:8px}
-.actions{display:flex;gap:10px;margin-bottom:10px}
-</style>
+  <meta charset="UTF-8">
+  <title>Instagram Non Followers</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: Arial, sans-serif; background:#0f172a; color:#e5e7eb; padding:20px }
+    h2 { margin-bottom:5px }
+    input, button { margin:10px 0 }
+    button { padding:8px 14px; cursor:pointer }
+    ul { list-style:none; padding:0 }
+    li { padding:6px 0; border-bottom:1px solid #334155 }
+    a { color:#38bdf8; text-decoration:none }
+    .stats { margin:10px 0; color:#94a3b8 }
+  </style>
 </head>
 
 <body>
-<div class="container">
 
-<h2>Instagram Followers Analyzer</h2>
-<p style="color:var(--muted)">Offline • No login • 100% safe</p>
+<h2>Instagram Non-Followers Checker</h2>
+<p class="stats">Offline • No login • Safe</p>
 
-<div class="card">
-<label>followers_1.html</label>
-<input type="file" id="followersFile"><br>
-<label>following.html</label>
-<input type="file" id="followingFile"><br>
+<label>followers_1.html</label><br>
+<input type="file" id="followers"><br>
+
+<label>following.html</label><br>
+<input type="file" id="following"><br>
+
 <button onclick="analyze()">Analyze</button>
+
 <div class="stats" id="stats"></div>
-</div>
 
-<div class="card">
-<div class="tabs">
-  <div class="tab active" id="tab-notBack" onclick="switchTab('notBack')">❌ Not following back</div>
-  <div class="tab" id="tab-mutual" onclick="switchTab('mutual')">✅ Mutual</div>
-</div>
-
-<div class="actions">
-  <input class="search" id="search" placeholder="Search username..." oninput="render()">
-  <button class="secondary" onclick="openSelected()">Open selected (max 5)</button>
-</div>
-
-<ul id="list"></ul>
-</div>
-
-</div>
+<h3>❌ Not following you back</h3>
+<ul id="result"></ul>
 
 <script>
-let followersHTML, followingHTML;
-let state={notBack:[],mutual:[]};
-let currentTab="notBack";
+let followersHTML = "", followingHTML = "";
 
-document.getElementById("followersFile").onchange=e=>read(e,f=>followersHTML=f);
-document.getElementById("followingFile").onchange=e=>read(e,f=>followingHTML=f);
+document.getElementById("followers").onchange = e => read(e, v => followersHTML = v);
+document.getElementById("following").onchange = e => read(e, v => followingHTML = v);
 
-function read(e,cb){const r=new FileReader();r.onload=()=>cb(r.result);r.readAsText(e.target.files[0]);}
+function read(e, cb) {
+  const r = new FileReader();
+  r.onload = () => cb(r.result);
+  r.readAsText(e.target.files[0]);
+}
 
-function extractUsernames(html){
-  const doc=new DOMParser().parseFromString(html,"text/html");
+function extractUsernames(html) {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+
   return [...doc.querySelectorAll("a")]
-    .map(a=>a.getAttribute("href")||"")
-    .map(h=>{
-      const m=h.match(/instagram\.com\/(?:_u\/)?([^/?]+)/);
-      return m?m[1]:null;
-    }).filter(Boolean);
+    .map(a => a.textContent.trim())
+    .filter(t =>
+      t &&
+      !t.includes("instagram") &&
+      !t.includes("Follow") &&
+      !t.includes("Requested")
+    )
+    .map(t => t.replace(/[^a-zA-Z0-9._]/g, ""));
 }
 
-function analyze(){
-  if(!followersHTML||!followingHTML){alert("Upload both files");return;}
+function analyze() {
+  if (!followersHTML || !followingHTML) {
+    alert("Upload both files");
+    return;
+  }
 
-  const followers=new Set(extractUsernames(followersHTML));
-  const following=new Set(extractUsernames(followingHTML));
+  const followers = new Set(extractUsernames(followersHTML));
+  const following = extractUsernames(followingHTML);
 
-  state.notBack=[...following].filter(u=>!followers.has(u));
-  state.mutual=[...following].filter(u=>followers.has(u));
+  const notBack = following.filter(u => !followers.has(u));
 
-  document.getElementById("stats").innerHTML=`
-    <div class="stat">Followers<b>${followers.size}</b></div>
-    <div class="stat">Following<b>${following.size}</b></div>
-    <div class="stat">Not following back<b style="color:var(--danger)">${state.notBack.length}</b></div>
-    <div class="stat">Mutual<b style="color:var(--success)">${state.mutual.length}</b></div>
+  document.getElementById("stats").innerHTML = `
+    Followers: <b>${followers.size}</b><br>
+    Following: <b>${following.length}</b><br>
+    Not following back: <b style="color:#f87171">${notBack.length}</b>
   `;
-  render();
-}
 
-function switchTab(t){
-  currentTab=t;
-  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
-  document.getElementById("tab-"+t).classList.add("active");
-  render();
-}
+  const ul = document.getElementById("result");
+  ul.innerHTML = "";
 
-function render(){
-  const q=document.getElementById("search").value.toLowerCase();
-  const ul=document.getElementById("list");
-  ul.innerHTML="";
-  state[currentTab]
-    .filter(u=>u.includes(q))
-    .forEach(u=>{
-      ul.innerHTML+=`
-      <li>
-        <div>
-          <input type="checkbox" class="checkbox" value="${u}">
-          <a href="https://instagram.com/${u}" target="_blank">${u}</a>
-        </div>
-        <button class="secondary" onclick="window.open('https://instagram.com/${u}','_blank')">Open</button>
-      </li>`;
-    });
-}
-
-function openSelected(){
-  const selected=[...document.querySelectorAll(".checkbox:checked")]
-    .map(c=>c.value).slice(0,5);
-  selected.forEach((u,i)=>setTimeout(
-    ()=>window.open("https://instagram.com/"+u,"_blank"), i*800));
+  notBack.forEach(u => {
+    const li = document.createElement("li");
+    li.innerHTML = `<a href="https://instagram.com/${u}" target="_blank">${u}</a>`;
+    ul.appendChild(li);
+  });
 }
 </script>
+
 </body>
 </html>
