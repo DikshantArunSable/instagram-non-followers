@@ -1,88 +1,144 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Instagram Non Followers</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    body { font-family: Arial, sans-serif; background:#0f172a; color:#e5e7eb; padding:20px }
-    h2 { margin-bottom:5px }
-    input, button { margin:10px 0 }
-    button { padding:8px 14px; cursor:pointer }
-    ul { list-style:none; padding:0 }
-    li { padding:6px 0; border-bottom:1px solid #334155 }
-    a { color:#38bdf8; text-decoration:none }
-    .stats { margin:10px 0; color:#94a3b8 }
-  </style>
+<meta charset="UTF-8">
+<title>Instagram Non-Followers Checker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+  body {
+    font-family: system-ui, Arial, sans-serif;
+    background: #0f172a;
+    color: #e5e7eb;
+    padding: 24px;
+  }
+  h1 { margin-bottom: 4px; }
+  p { color: #94a3b8; margin-top: 0; }
+  .box {
+    background: #020617;
+    padding: 20px;
+    border-radius: 12px;
+    max-width: 900px;
+  }
+  input, button {
+    margin-top: 10px;
+  }
+  button {
+    padding: 10px 16px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .stats {
+    margin-top: 16px;
+    color: #cbd5f5;
+  }
+  ul {
+    margin-top: 16px;
+    padding: 0;
+    list-style: none;
+  }
+  li {
+    padding: 8px 0;
+    border-bottom: 1px solid #1e293b;
+  }
+  a {
+    color: #38bdf8;
+    text-decoration: none;
+  }
+</style>
 </head>
 
 <body>
 
-<h2>Instagram Non-Followers Checker</h2>
-<p class="stats">Offline • No login • Safe</p>
+<h1>Instagram Non-Followers Checker</h1>
+<p>Offline • No login • Safe</p>
 
-<label>followers_1.html</label><br>
-<input type="file" id="followers"><br>
+<div class="box">
+  <label>followers_1.html</label><br>
+  <input type="file" id="followersFile"><br><br>
 
-<label>following.html</label><br>
-<input type="file" id="following"><br>
+  <label>following.html</label><br>
+  <input type="file" id="followingFile"><br><br>
 
-<button onclick="analyze()">Analyze</button>
+  <button onclick="analyze()">Analyze</button>
 
-<div class="stats" id="stats"></div>
+  <div class="stats" id="stats"></div>
 
-<h3>❌ Not following you back</h3>
-<ul id="result"></ul>
+  <h3 style="margin-top:20px;">❌ Not following you back</h3>
+  <ul id="result"></ul>
+</div>
 
 <script>
-let followersHTML = "", followingHTML = "";
+let followersHTML = "";
+let followingHTML = "";
 
-document.getElementById("followers").onchange = e => read(e, v => followersHTML = v);
-document.getElementById("following").onchange = e => read(e, v => followingHTML = v);
+document.getElementById("followersFile").onchange = e =>
+  readFile(e.target.files[0], html => followersHTML = html);
 
-function read(e, cb) {
-  const r = new FileReader();
-  r.onload = () => cb(r.result);
-  r.readAsText(e.target.files[0]);
+document.getElementById("followingFile").onchange = e =>
+  readFile(e.target.files[0], html => followingHTML = html);
+
+function readFile(file, callback) {
+  const reader = new FileReader();
+  reader.onload = () => callback(reader.result);
+  reader.readAsText(file);
 }
 
+/*
+  ✅ This function is the KEY FIX
+  It works for BOTH followers.html and following.html
+*/
 function extractUsernames(html) {
   const doc = new DOMParser().parseFromString(html, "text/html");
+  const usernames = new Set();
 
-  return [...doc.querySelectorAll("a")]
-    .map(a => a.textContent.trim())
-    .filter(t =>
-      t &&
-      !t.includes("instagram") &&
-      !t.includes("Follow") &&
-      !t.includes("Requested")
-    )
-    .map(t => t.replace(/[^a-zA-Z0-9._]/g, ""));
+  doc.querySelectorAll("a").forEach(a => {
+    let username = a.textContent.trim();
+
+    // If text is empty or junk, fall back to href
+    if (!username || username.includes("instagram")) {
+      const href = a.getAttribute("href") || "";
+      const match = href.match(/\/([A-Za-z0-9._]+)\/?$/);
+      if (match) username = match[1];
+    }
+
+    // Clean and validate
+    if (username) {
+      username = username.replace(/[^A-Za-z0-9._]/g, "");
+      if (username.length > 1) {
+        usernames.add(username);
+      }
+    }
+  });
+
+  return [...usernames];
 }
 
 function analyze() {
   if (!followersHTML || !followingHTML) {
-    alert("Upload both files");
+    alert("Please upload both files");
     return;
   }
 
   const followers = new Set(extractUsernames(followersHTML));
   const following = extractUsernames(followingHTML);
 
-  const notBack = following.filter(u => !followers.has(u));
+  const notFollowingBack = following.filter(u => !followers.has(u));
 
   document.getElementById("stats").innerHTML = `
     Followers: <b>${followers.size}</b><br>
     Following: <b>${following.length}</b><br>
-    Not following back: <b style="color:#f87171">${notBack.length}</b>
+    Not following back: <b style="color:#f87171">${notFollowingBack.length}</b>
   `;
 
   const ul = document.getElementById("result");
   ul.innerHTML = "";
 
-  notBack.forEach(u => {
+  notFollowingBack.forEach(user => {
     const li = document.createElement("li");
-    li.innerHTML = `<a href="https://instagram.com/${u}" target="_blank">${u}</a>`;
+    li.innerHTML = `
+      <a href="https://instagram.com/${user}" target="_blank">${user}</a>
+    `;
     ul.appendChild(li);
   });
 }
