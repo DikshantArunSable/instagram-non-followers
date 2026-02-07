@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>FollowScope – See Who Doesn’t Follow You Back (Safely)</title>
-  <meta name="description" content="FollowScope helps you see who doesn’t follow you back on Instagram using official data export. No login required. Runs locally. Safe and private.">
+  <title>FollowScope – Safe Instagram Non-Followers Analyzer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="index, follow">
 
-  <!-- Poppins Font -->
+  <!-- Poppins -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -14,8 +12,8 @@
 <style>
 :root{
   --bg:#050814;
-  --glass:rgba(255,255,255,0.06);
-  --border:rgba(255,255,255,0.12);
+  --glass:rgba(255,255,255,.07);
+  --border:rgba(255,255,255,.14);
   --text:#eef1f8;
   --muted:#aab3cf;
   --accent:#4cc9f0;
@@ -29,205 +27,181 @@
 html,body{
   margin:0;
   padding:0;
-  font-family:'Poppins',system-ui,sans-serif;
+  font-family:'Poppins',sans-serif;
   color:var(--text);
   background:
-    radial-gradient(1200px 600px at 15% -10%, #1b3a5f, transparent),
-    radial-gradient(1000px 500px at 85% 10%, #3a0f6c, transparent),
-    linear-gradient(180deg, #050814, #070b18);
+    radial-gradient(1200px 600px at 20% -10%, #1b3a5f, transparent),
+    radial-gradient(900px 500px at 80% 10%, #3a0f6c, transparent),
+    linear-gradient(180deg,#050814,#070b18);
 }
 
-a{color:var(--accent);text-decoration:none}
+.container{
+  max-width:1100px;
+  margin:auto;
+  padding:20px;
+}
 
-.container{max-width:1140px;margin:auto;padding:28px}
-
-/* ===== Header ===== */
+/* ---------- HEADER ---------- */
 header{
   display:flex;
   align-items:center;
-  gap:16px;
-  margin-bottom:80px;
+  gap:14px;
+  margin-bottom:40px;
 }
 
 header img{
-  width:60px;
-  height:60px;
-  filter:drop-shadow(0 0 18px rgba(76,201,240,.45));
+  width:52px;
+  height:52px;
 }
 
 header h1{
   margin:0;
-  font-size:28px;
-  font-weight:600;
+  font-size:24px;
 }
 
 header span{
-  color:var(--muted);
-  font-size:14px;
-}
-
-/* ===== Hero ===== */
-.hero{
-  display:grid;
-  grid-template-columns:1.2fr .8fr;
-  gap:40px;
-  align-items:center;
-  margin-bottom:120px;
-}
-
-.hero h2{
-  font-size:44px;
-  line-height:1.2;
-  margin:0 0 20px;
-}
-
-.hero p{
-  color:var(--muted);
-  font-size:17px;
-  line-height:1.7;
-}
-
-.hero-actions{
-  margin-top:30px;
-  display:flex;
-  gap:16px;
-  flex-wrap:wrap;
-}
-
-button.primary{
-  background:linear-gradient(135deg,var(--accent),var(--accent2));
-  border:none;
-  color:#000;
-  padding:16px 26px;
-  border-radius:14px;
-  font-weight:600;
-  cursor:pointer;
-  box-shadow:0 18px 50px rgba(76,201,240,.45);
-  transition:.2s ease;
-}
-
-button.primary:hover{
-  transform:translateY(-2px);
-  box-shadow:0 26px 70px rgba(76,201,240,.6);
-}
-
-button.secondary{
-  background:transparent;
-  border:1px solid var(--border);
-  color:var(--text);
-  padding:16px 26px;
-  border-radius:14px;
-  cursor:pointer;
-}
-
-/* ===== Trust Pills ===== */
-.pills{
-  display:flex;
-  gap:14px;
-  flex-wrap:wrap;
-  margin-top:30px;
-}
-
-.pill{
-  background:rgba(255,255,255,.05);
-  border:1px solid var(--border);
-  border-radius:999px;
-  padding:10px 16px;
   font-size:13px;
   color:var(--muted);
 }
 
-/* ===== Cards ===== */
-.card{
-  background:
-    linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02)),
-    var(--glass);
-  border:1px solid var(--border);
-  backdrop-filter: blur(14px);
-  border-radius:20px;
-  padding:28px;
-  margin-bottom:32px;
+/* ---------- HERO ---------- */
+.hero{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:32px;
+  margin-bottom:80px;
 }
 
-/* ===== Analyzer ===== */
+.hero h2{
+  font-size:40px;
+  margin:0 0 18px;
+}
+
+.hero p{
+  font-size:16px;
+  color:var(--muted);
+  line-height:1.7;
+}
+
+.hero-visual{
+  background:
+    radial-gradient(circle at 30% 30%, var(--accent), transparent 60%),
+    radial-gradient(circle at 70% 60%, var(--accent2), transparent 60%);
+  border-radius:24px;
+  opacity:.6;
+}
+
+/* ---------- BUTTON ---------- */
+button{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border:none;
+  padding:14px 24px;
+  border-radius:14px;
+  font-weight:600;
+  cursor:pointer;
+}
+
+button:disabled{
+  opacity:.5;
+  cursor:not-allowed;
+}
+
+/* ---------- CARD ---------- */
+.card{
+  background:var(--glass);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:24px;
+  margin-bottom:28px;
+}
+
+/* ---------- UPLOAD ---------- */
 .upload-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  grid-template-columns:1fr 1fr;
   gap:18px;
 }
 
 .upload-box{
-  background:rgba(255,255,255,.04);
   border:1px dashed var(--border);
   border-radius:16px;
-  padding:18px;
+  padding:16px;
 }
 
-button.analyze{
+/* ---------- STATS ---------- */
+.stats{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:16px;
   margin-top:20px;
 }
 
-.stats{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-  gap:18px;
-  margin-top:24px;
-}
-
 .stat{
-  background:rgba(0,0,0,.35);
-  border:1px solid var(--border);
-  border-radius:18px;
-  padding:20px;
+  background:#00000040;
+  border-radius:16px;
+  padding:16px;
 }
 
-.stat span{font-size:13px;color:var(--muted)}
-.stat b{display:block;font-size:32px;margin-top:6px}
+.stat b{font-size:26px}
 
+/* ---------- LIST ---------- */
 .tabs{
   display:flex;
-  gap:12px;
-  margin:24px 0 14px;
+  gap:10px;
+  margin:20px 0;
 }
 
 .tab{
-  padding:10px 18px;
+  padding:8px 14px;
   border-radius:999px;
   border:1px solid var(--border);
   cursor:pointer;
-  color:var(--muted);
 }
 
 .tab.active{
-  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  background:var(--accent);
   color:#000;
-  font-weight:600;
 }
 
-input[type="search"], input[type="file"]{
+input[type="file"],input[type="search"]{
   width:100%;
-  padding:12px;
-  border-radius:12px;
-  background:rgba(0,0,0,.35);
+  margin-top:10px;
+  padding:10px;
+  border-radius:10px;
   border:1px solid var(--border);
+  background:#00000050;
   color:var(--text);
 }
 
-ul{list-style:none;padding:0;margin:0}
+ul{list-style:none;padding:0}
 
 li{
-  display:flex;
-  justify-content:space-between;
-  padding:14px 0;
-  border-bottom:1px solid rgba(255,255,255,.08);
+  padding:12px 0;
+  border-bottom:1px solid #ffffff1a;
 }
 
-/* ===== Footer ===== */
+/* ---------- FOOTER ---------- */
 footer{
-  margin-top:80px;
+  margin-top:60px;
   text-align:center;
   font-size:13px;
   color:var(--muted);
+}
+
+/* ---------- MOBILE FIX ---------- */
+@media (max-width: 900px){
+  .hero{
+    grid-template-columns:1fr;
+  }
+  .hero-visual{
+    display:none;
+  }
+  .upload-grid{
+    grid-template-columns:1fr;
+  }
+  .hero h2{
+    font-size:32px;
+  }
 }
 </style>
 </head>
@@ -239,7 +213,7 @@ footer{
   <img src="logo.png">
   <div>
     <h1>FollowScope</h1>
-    <span>Private Instagram follower analysis · No login</span>
+    <span>No login • Runs locally • Safe</span>
   </div>
 </header>
 
@@ -247,59 +221,40 @@ footer{
   <div>
     <h2>See who doesn’t follow you back — safely.</h2>
     <p>
-      FollowScope analyzes your Instagram followers using your official data export.
-      No passwords. No scraping. Everything runs locally in your browser.
+      Analyze your Instagram followers using official data export.
+      No password, no scraping, no risk.
     </p>
-
-    <div class="hero-actions">
-      <button class="primary" onclick="document.getElementById('analyzer').scrollIntoView({behavior:'smooth'})">
-        Start analyzing
-      </button>
-      <button class="secondary" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">
-        How it works
-      </button>
-    </div>
-
-    <div class="pills">
-      <div class="pill">🔒 No login required</div>
-      <div class="pill">🖥 Runs locally</div>
-      <div class="pill">📦 Official data export</div>
-      <div class="pill">🚫 No automation</div>
-    </div>
+    <button onclick="document.getElementById('analyzer').scrollIntoView({behavior:'smooth'})">
+      Start analyzing
+    </button>
   </div>
-</section>
-
-<section class="card" id="how">
-  <h3>How it works</h3>
-  <p>1. Download your Instagram data</p>
-  <p>2. Upload followers & following files</p>
-  <p>3. Instantly see who doesn’t follow you back</p>
+  <div class="hero-visual"></div>
 </section>
 
 <section class="card" id="analyzer">
-  <h3>Analyze your followers</h3>
+  <h3>Upload your Instagram data</h3>
 
   <div class="upload-grid">
     <div class="upload-box">
-      <label>followers_1.html</label><br>
+      followers_1.html
       <input type="file" id="followersFile">
     </div>
     <div class="upload-box">
-      <label>following.html</label><br>
+      following.html
       <input type="file" id="followingFile">
     </div>
   </div>
 
-  <button class="primary analyze" id="analyzeBtn" disabled onclick="analyze()">Analyze</button>
+  <button id="analyzeBtn" disabled>Analyze</button>
 
   <div class="stats" id="stats"></div>
 
   <div class="tabs">
-    <div class="tab active" id="tab-notBack" onclick="switchTab('notBack')">❌ Not following back</div>
-    <div class="tab" id="tab-mutual" onclick="switchTab('mutual')">✅ Mutual</div>
+    <div class="tab active" onclick="switchTab('notBack')" id="tab-notBack">Not following back</div>
+    <div class="tab" onclick="switchTab('mutual')" id="tab-mutual">Mutual</div>
   </div>
 
-  <input type="search" placeholder="Search username…" oninput="render()" id="search">
+  <input type="search" placeholder="Search…" oninput="render()" id="search">
   <ul id="result"></ul>
 </section>
 
@@ -310,53 +265,58 @@ footer{
 </div>
 
 <script>
-let followersHTML="", followingHTML="";
-let data={notBack:[],mutual:[]}, currentTab="notBack";
+let followersHTML=null, followingHTML=null;
+let data={notBack:[],mutual:[]}, tab="notBack";
 
 const f=document.getElementById("followersFile");
 const fo=document.getElementById("followingFile");
 const btn=document.getElementById("analyzeBtn");
 
-f.onchange=e=>read(e,h=>followersHTML=h);
-fo.onchange=e=>read(e,h=>followingHTML=h);
+f.onchange=()=>readFile(f,file=>followersHTML=file);
+fo.onchange=()=>readFile(fo,file=>followingHTML=file);
 
-function read(e,cb){
+function readFile(input,cb){
   const r=new FileReader();
   r.onload=()=>{cb(r.result);btn.disabled=!(followersHTML&&followingHTML)};
-  r.readAsText(e.target.files[0]);
+  r.readAsText(input.files[0]);
 }
 
-function extractUsernames(html){
-  const doc=new DOMParser().parseFromString(html,"text/html");
-  const set=new Set();
-  doc.querySelectorAll("a").forEach(a=>{
+btn.onclick=()=>{
+  btn.textContent="Analyzing…";
+  setTimeout(()=>{analyze();btn.textContent="Analyze"},300);
+};
+
+function extract(html){
+  const d=new DOMParser().parseFromString(html,"text/html");
+  const s=new Set();
+  d.querySelectorAll("a").forEach(a=>{
     let u=a.textContent.trim();
-    if(!u||u.includes("instagram")){
-      const h=a.getAttribute("href")||"";
-      const m=h.match(/\/([A-Za-z0-9._]+)\/?$/);
-      if(m) u=m[1];
+    if(!u){
+      const m=(a.href||"").match(/\/([A-Za-z0-9._]+)\/?$/);
+      if(m)u=m[1];
     }
-    if(u){u=u.replace(/[^A-Za-z0-9._]/g,"");if(u.length>1)set.add(u);}
+    if(u)s.add(u.replace(/[^A-Za-z0-9._]/g,""));
   });
-  return [...set];
+  return [...s];
 }
 
 function analyze(){
-  const followers=new Set(extractUsernames(followersHTML));
-  const following=extractUsernames(followingHTML);
+  const followers=new Set(extract(followersHTML));
+  const following=extract(followingHTML);
   data.notBack=following.filter(u=>!followers.has(u));
   data.mutual=following.filter(u=>followers.has(u));
+
   document.getElementById("stats").innerHTML=`
     <div class="stat"><span>Followers</span><b>${followers.size}</b></div>
     <div class="stat"><span>Following</span><b>${following.length}</b></div>
-    <div class="stat"><span>Not following back</span><b style="color:var(--danger)">${data.notBack.length}</b></div>
-    <div class="stat"><span>Mutual</span><b style="color:var(--success)">${data.mutual.length}</b></div>
+    <div class="stat"><span>Not following back</span><b>${data.notBack.length}</b></div>
+    <div class="stat"><span>Mutual</span><b>${data.mutual.length}</b></div>
   `;
   render();
 }
 
 function switchTab(t){
-  currentTab=t;
+  tab=t;
   document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
   document.getElementById("tab-"+t).classList.add("active");
   render();
@@ -366,7 +326,7 @@ function render(){
   const q=document.getElementById("search").value.toLowerCase();
   const ul=document.getElementById("result");
   ul.innerHTML="";
-  data[currentTab].filter(u=>u.includes(q)).forEach(u=>{
+  data[tab].filter(u=>u.includes(q)).forEach(u=>{
     ul.innerHTML+=`<li><a href="https://instagram.com/${u}" target="_blank">${u}</a></li>`;
   });
 }
