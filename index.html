@@ -1,102 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- ================= SEO ================= -->
-  <title>FollowScope – Safe Instagram Non-Followers Analyzer (No Login)</title>
-  <meta name="description" content="FollowScope helps you see who doesn’t follow you back on Instagram using official data export. No login required. Runs locally. Private & safe.">
-  <meta name="keywords" content="instagram non followers, who doesn't follow me back instagram, instagram followers analyzer, instagram data export tool">
-  <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://YOUR_USERNAME.github.io/instagram-non-followers/">
-
-  <!-- Open Graph -->
-  <meta property="og:title" content="FollowScope – Safe Instagram Non-Followers Analyzer">
-  <meta property="og:description" content="Analyze Instagram followers safely using official data export. No login. No tracking.">
-  <meta property="og:image" content="logo.png">
-  <meta property="og:type" content="website">
-
+  <title>FollowScope – Safe Instagram Non-Followers Analyzer</title>
+  <meta name="description" content="FollowScope lets you see who doesn’t follow you back on Instagram using official data export. No login. Runs locally. Private & safe.">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="index, follow">
 
 <style>
-
-  :root{
-  --bg:#070b18;
-  --card:#0c1224;
-  --text:#e5e7eb;
-  --muted:#9ca3af;
+/* ================= ROOT ================= */
+:root{
+  --bg:#050814;
+  --glass:rgba(255,255,255,0.06);
+  --border:rgba(255,255,255,0.12);
+  --text:#e6e9f0;
+  --muted:#9aa4bf;
   --accent:#4cc9f0;
+  --accent2:#9d4edd;
   --success:#4ade80;
   --danger:#f87171;
-  --border:rgba(255,255,255,0.08);
 }
 
+/* ================= RESET ================= */
 *{box-sizing:border-box}
+html,body{margin:0;padding:0}
 
+/* ================= BODY ================= */
 body{
-  margin:0;
-  font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
-  background:
-    radial-gradient(1200px 600px at 20% -10%, #122b45, transparent),
-    radial-gradient(900px 500px at 80% 10%, #2b1550, transparent),
-    linear-gradient(180deg, #050816, #070b18);
+  font-family: system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
   color:var(--text);
-  padding:24px;
+  background:
+    radial-gradient(1200px 600px at 15% -10%, #1b3a5f, transparent),
+    radial-gradient(1000px 500px at 85% 10%, #3a0f6c, transparent),
+    linear-gradient(180deg, #050814, #070b18);
+  min-height:100vh;
+  padding:28px;
 }
 
+/* ================= LAYOUT ================= */
 .container{max-width:1120px;margin:auto}
 
-/* ===== Header ===== */
+/* ================= HEADER ================= */
 header{
   display:flex;
   align-items:center;
   gap:16px;
-  margin-bottom:36px;
+  margin-bottom:40px;
 }
 
 header img{
-  width:56px;
-  height:56px;
-  filter:drop-shadow(0 0 12px rgba(76,201,240,0.35));
+  width:60px;
+  height:60px;
+  filter:drop-shadow(0 0 18px rgba(76,201,240,.5));
 }
 
 header h1{
   margin:0;
-  font-size:26px;
-  font-weight:700;
+  font-size:28px;
+  letter-spacing:.3px;
 }
 
 header span{
-  font-size:14px;
   color:var(--muted);
+  font-size:14px;
 }
 
-/* ===== Cards ===== */
+/* ================= CARD ================= */
 .card{
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01)),
-    var(--card);
+    linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02)),
+    var(--glass);
   border:1px solid var(--border);
-  border-radius:18px;
-  padding:24px;
-  margin-bottom:24px;
+  backdrop-filter: blur(14px);
+  border-radius:20px;
+  padding:26px;
+  margin-bottom:28px;
   box-shadow:
-    0 20px 60px rgba(0,0,0,0.6),
-    inset 0 1px 0 rgba(255,255,255,0.04);
-  backdrop-filter: blur(8px);
+    0 30px 80px rgba(0,0,0,.6),
+    inset 0 1px 0 rgba(255,255,255,.08);
+  animation:fadeUp .6s ease both;
+}
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(14px)}
+  to{opacity:1;transform:none}
 }
 
 .card h3{
-  margin:0 0 8px;
+  margin:0 0 10px;
   font-size:18px;
 }
 
 .card p{
-  margin:0 0 14px;
+  margin:0 0 16px;
   color:var(--muted);
-  font-size:14px;
   line-height:1.6;
 }
 
-/* ===== Upload ===== */
+/* ================= UPLOAD ================= */
 .upload-grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
@@ -104,120 +104,122 @@ header span{
 }
 
 .upload-box{
-  background:rgba(255,255,255,0.02);
+  background:rgba(255,255,255,.04);
   border:1px dashed var(--border);
-  border-radius:14px;
+  border-radius:16px;
   padding:18px;
+  transition:.2s ease;
 }
 
-/* ===== Buttons ===== */
+.upload-box.loaded{
+  border-color:var(--success);
+  box-shadow:0 0 0 1px rgba(74,222,128,.3);
+}
+
+/* ================= BUTTON ================= */
 button{
-  background:linear-gradient(135deg,#4cc9f0,#4895ef);
-  color:#000;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
   border:none;
-  padding:12px 20px;
-  border-radius:12px;
-  font-weight:600;
+  color:#000;
+  padding:14px 22px;
+  border-radius:14px;
+  font-weight:700;
   cursor:pointer;
-  box-shadow:0 10px 30px rgba(76,201,240,0.35);
-  transition:transform .15s ease, box-shadow .15s ease;
+  box-shadow:0 18px 50px rgba(76,201,240,.45);
+  transition:.2s ease;
 }
 
 button:hover:not(:disabled){
-  transform:translateY(-1px);
-  box-shadow:0 14px 40px rgba(76,201,240,0.45);
+  transform:translateY(-2px);
+  box-shadow:0 26px 70px rgba(76,201,240,.6);
 }
 
 button:disabled{
   opacity:.4;
-  box-shadow:none;
   cursor:not-allowed;
+  box-shadow:none;
 }
 
-/* ===== Stats ===== */
+/* ================= STATS ================= */
 .stats{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-  gap:16px;
+  gap:18px;
   margin-top:18px;
 }
 
 .stat{
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01)),
-    #020617;
+  background:rgba(0,0,0,.35);
   border:1px solid var(--border);
-  border-radius:16px;
-  padding:18px;
+  border-radius:18px;
+  padding:20px;
 }
 
 .stat span{
-  color:var(--muted);
   font-size:13px;
+  color:var(--muted);
 }
 
 .stat b{
   display:block;
-  font-size:28px;
+  font-size:32px;
   margin-top:6px;
 }
 
-/* ===== Tabs ===== */
+/* ================= TABS ================= */
 .tabs{
   display:flex;
   gap:12px;
-  margin-top:20px;
+  margin:22px 0 12px;
 }
 
 .tab{
-  padding:8px 16px;
+  padding:10px 18px;
   border-radius:999px;
   border:1px solid var(--border);
   cursor:pointer;
   color:var(--muted);
-  transition:background .15s ease;
+  transition:.2s ease;
 }
 
 .tab.active{
-  background:linear-gradient(135deg,#4cc9f0,#4895ef);
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
   color:#000;
-  font-weight:600;
+  font-weight:700;
 }
 
-/* ===== Inputs ===== */
+/* ================= LIST ================= */
 input[type="search"], input[type="file"]{
   width:100%;
-  padding:10px;
-  border-radius:10px;
+  padding:12px;
+  border-radius:12px;
+  background:rgba(0,0,0,.35);
   border:1px solid var(--border);
-  background:#020617;
   color:var(--text);
 }
 
-/* ===== List ===== */
 ul{list-style:none;padding:0;margin:0}
 
 li{
   display:flex;
   justify-content:space-between;
-  padding:12px 0;
-  border-bottom:1px solid rgba(255,255,255,0.06);
+  align-items:center;
+  padding:14px 0;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  transition:.15s ease;
 }
 
-a{
-  color:var(--accent);
-  text-decoration:none;
-}
+li:hover{background:rgba(255,255,255,.03)}
 
-/* ===== Footer ===== */
+a{color:var(--accent);text-decoration:none}
+
+/* ================= FOOTER ================= */
 footer{
   text-align:center;
+  margin-top:42px;
   font-size:13px;
   color:var(--muted);
-  margin-top:36px;
 }
-
-
 </style>
 </head>
 
@@ -225,29 +227,27 @@ footer{
 <div class="container">
 
 <header>
-  <img src="logo.png" alt="FollowScope logo">
+  <img src="logo.png">
   <div>
     <h1>FollowScope</h1>
-    <span>Private Instagram follower analysis • No login</span>
+    <span>Private Instagram follower analysis · No login</span>
   </div>
 </header>
 
 <section class="card">
   <h3>Step 1 – Prepare your Instagram data</h3>
-  <p>Download your official Instagram data export. This ensures safe and accurate analysis.</p>
-  <p><b>Path:</b> Instagram → Settings → Accounts Center → Your information → Download your information</p>
+  <p>Download your official Instagram data export for accurate and safe analysis.</p>
 </section>
 
 <section class="card">
   <h3>Step 2 – Upload files</h3>
-  <p>Upload these two files from your Instagram export.</p>
 
   <div class="upload-grid">
-    <div class="upload-box">
+    <div class="upload-box" id="fBox">
       <label>followers_1.html</label><br>
       <input type="file" id="followersFile">
     </div>
-    <div class="upload-box">
+    <div class="upload-box" id="foBox">
       <label>following.html</label><br>
       <input type="file" id="followingFile">
     </div>
@@ -255,7 +255,6 @@ footer{
 
   <br>
   <button id="analyzeBtn" disabled onclick="analyze()">Analyze</button>
-  <p id="freshness" style="margin-top:10px;color:var(--muted)"></p>
 </section>
 
 <section class="card">
@@ -263,28 +262,12 @@ footer{
   <div class="stats" id="stats"></div>
 
   <div class="tabs">
-    <div class="tab active" onclick="switchTab('notBack')" id="tab-notBack">❌ Not following back</div>
-    <div class="tab" onclick="switchTab('mutual')" id="tab-mutual">✅ Mutual</div>
+    <div class="tab active" id="tab-notBack" onclick="switchTab('notBack')">❌ Not following back</div>
+    <div class="tab" id="tab-mutual" onclick="switchTab('mutual')">✅ Mutual</div>
   </div>
 
   <input type="search" placeholder="Search username…" oninput="render()" id="search">
-
   <ul id="result"></ul>
-
-  <br>
-  <button onclick="exportCSV()">Export CSV</button>
-</section>
-
-<section class="card">
-  <h3>About accuracy & safety</h3>
-  <p>This tool uses Instagram’s official data export. It is highly accurate, but may not include changes from the last few hours.</p>
-  <p>FollowScope does not require your Instagram login and runs entirely in your browser.</p>
-
-  <details>
-    <summary>FAQ</summary>
-    <p><b>Is this safe?</b> Yes. No login, no API, no data leaves your device.</p>
-    <p><b>Why not real-time?</b> Instagram does not allow full follower access in real-time safely.</p>
-  </details>
 </section>
 
 <footer>
@@ -295,18 +278,18 @@ footer{
 
 <script>
 let followersHTML="", followingHTML="";
-let data={notBack:[], mutual:[]}, currentTab="notBack";
+let data={notBack:[],mutual:[]}, currentTab="notBack";
 
 const fInput=document.getElementById("followersFile");
 const foInput=document.getElementById("followingFile");
 const btn=document.getElementById("analyzeBtn");
 
-fInput.onchange=e=>read(e,h=>followersHTML=h);
-foInput.onchange=e=>read(e,h=>followingHTML=h);
+fInput.onchange=e=>read(e,h=>{followersHTML=h;document.getElementById("fBox").classList.add("loaded")});
+foInput.onchange=e=>read(e,h=>{followingHTML=h;document.getElementById("foBox").classList.add("loaded")});
 
 function read(e,cb){
   const r=new FileReader();
-  r.onload=()=>{cb(r.result);btn.disabled=!(followersHTML&&followingHTML);};
+  r.onload=()=>{cb(r.result);btn.disabled=!(followersHTML&&followingHTML)};
   r.readAsText(e.target.files[0]);
 }
 
@@ -328,10 +311,8 @@ function extractUsernames(html){
 function analyze(){
   const followers=new Set(extractUsernames(followersHTML));
   const following=extractUsernames(followingHTML);
-
   data.notBack=following.filter(u=>!followers.has(u));
   data.mutual=following.filter(u=>followers.has(u));
-
   document.getElementById("stats").innerHTML=`
     <div class="stat"><span>Followers</span><b>${followers.size}</b></div>
     <div class="stat"><span>Following</span><b>${following.length}</b></div>
@@ -355,18 +336,6 @@ function render(){
   data[currentTab].filter(u=>u.includes(q)).forEach(u=>{
     ul.innerHTML+=`<li><a href="https://instagram.com/${u}" target="_blank">${u}</a></li>`;
   });
-}
-
-function exportCSV(){
-  const rows=[["username","type"]];
-  data.notBack.forEach(u=>rows.push([u,"not_following_back"]));
-  data.mutual.forEach(u=>rows.push([u,"mutual"]));
-  const csv=rows.map(r=>r.join(",")).join("\n");
-  const blob=new Blob([csv],{type:"text/csv"});
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(blob);
-  a.download="followscope_results.csv";
-  a.click();
 }
 </script>
 
