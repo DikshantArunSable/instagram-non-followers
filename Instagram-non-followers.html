@@ -1,146 +1,226 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Instagram Non-Followers Checker</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- ================= SEO ================= -->
+  <title>FollowScope – Safe Instagram Non-Followers Analyzer (No Login)</title>
+  <meta name="description" content="FollowScope helps you see who doesn’t follow you back on Instagram using official data export. No login required. Runs locally. Private & safe.">
+  <meta name="keywords" content="instagram non followers, who doesn't follow me back instagram, instagram followers analyzer, instagram data export tool">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://YOUR_USERNAME.github.io/instagram-non-followers/">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="FollowScope – Safe Instagram Non-Followers Analyzer">
+  <meta property="og:description" content="Analyze Instagram followers safely using official data export. No login. No tracking.">
+  <meta property="og:image" content="logo.png">
+  <meta property="og:type" content="website">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-  body {
-    font-family: system-ui, Arial, sans-serif;
-    background: #0f172a;
-    color: #e5e7eb;
-    padding: 24px;
-  }
-  h1 { margin-bottom: 4px; }
-  p { color: #94a3b8; margin-top: 0; }
-  .box {
-    background: #020617;
-    padding: 20px;
-    border-radius: 12px;
-    max-width: 900px;
-  }
-  input, button {
-    margin-top: 10px;
-  }
-  button {
-    padding: 10px 16px;
-    font-weight: 600;
-    cursor: pointer;
-  }
-  .stats {
-    margin-top: 16px;
-    color: #cbd5f5;
-  }
-  ul {
-    margin-top: 16px;
-    padding: 0;
-    list-style: none;
-  }
-  li {
-    padding: 8px 0;
-    border-bottom: 1px solid #1e293b;
-  }
-  a {
-    color: #38bdf8;
-    text-decoration: none;
-  }
+:root{
+  --bg:#0b1220;
+  --card:#111827;
+  --text:#e5e7eb;
+  --muted:#9ca3af;
+  --accent:#38bdf8;
+  --success:#4ade80;
+  --danger:#f87171;
+  --border:#1f2933;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  background:radial-gradient(1200px 600px at 10% -10%,#0f1b33,transparent),
+             radial-gradient(800px 400px at 90% 10%,#0c2a3d,transparent),
+             var(--bg);
+  color:var(--text);
+  padding:24px;
+}
+.container{max-width:1100px;margin:auto}
+header{display:flex;align-items:center;gap:14px;margin-bottom:28px}
+header img{width:54px;height:54px}
+header h1{margin:0;font-size:24px}
+header span{font-size:13px;color:var(--muted)}
+.card{
+  background:linear-gradient(180deg,#0b1220,#020617);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:20px;
+  margin-bottom:20px;
+}
+.card h3{margin:0 0 6px}
+.card p{margin:0 0 14px;color:var(--muted);font-size:14px}
+.upload-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.upload-box{border:1px dashed var(--border);border-radius:14px;padding:16px}
+button{
+  background:var(--accent);color:#000;border:none;
+  padding:12px 18px;border-radius:10px;font-weight:600;cursor:pointer
+}
+button:disabled{opacity:.4;cursor:not-allowed}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-top:14px}
+.stat{background:#020617;border:1px solid var(--border);border-radius:14px;padding:16px}
+.stat span{color:var(--muted);font-size:13px}
+.stat b{display:block;font-size:26px;margin-top:4px}
+.tabs{display:flex;gap:10px;margin-top:16px}
+.tab{padding:8px 14px;border-radius:20px;border:1px solid var(--border);cursor:pointer;color:var(--muted)}
+.tab.active{background:var(--accent);color:#000;font-weight:600}
+input[type="search"]{width:100%;padding:10px;border-radius:8px;border:1px solid var(--border);background:#020617;color:var(--text)}
+ul{list-style:none;padding:0;margin:0}
+li{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #1e293b}
+a{color:var(--accent);text-decoration:none}
+footer{text-align:center;font-size:13px;color:var(--muted);margin-top:30px}
+details{margin-top:10px}
+details summary{cursor:pointer;color:var(--accent)}
 </style>
 </head>
 
 <body>
+<div class="container">
 
-<h1>Instagram Non-Followers Checker</h1>
-<p>Offline • No login • Safe</p>
+<header>
+  <img src="logo.png" alt="FollowScope logo">
+  <div>
+    <h1>FollowScope</h1>
+    <span>Private Instagram follower analysis • No login</span>
+  </div>
+</header>
 
-<div class="box">
-  <label>followers_1.html</label><br>
-  <input type="file" id="followersFile"><br><br>
+<section class="card">
+  <h3>Step 1 – Prepare your Instagram data</h3>
+  <p>Download your official Instagram data export. This ensures safe and accurate analysis.</p>
+  <p><b>Path:</b> Instagram → Settings → Accounts Center → Your information → Download your information</p>
+</section>
 
-  <label>following.html</label><br>
-  <input type="file" id="followingFile"><br><br>
+<section class="card">
+  <h3>Step 2 – Upload files</h3>
+  <p>Upload these two files from your Instagram export.</p>
 
-  <button onclick="analyze()">Analyze</button>
+  <div class="upload-grid">
+    <div class="upload-box">
+      <label>followers_1.html</label><br>
+      <input type="file" id="followersFile">
+    </div>
+    <div class="upload-box">
+      <label>following.html</label><br>
+      <input type="file" id="followingFile">
+    </div>
+  </div>
 
+  <br>
+  <button id="analyzeBtn" disabled onclick="analyze()">Analyze</button>
+  <p id="freshness" style="margin-top:10px;color:var(--muted)"></p>
+</section>
+
+<section class="card">
+  <h3>Results</h3>
   <div class="stats" id="stats"></div>
 
-  <h3 style="margin-top:20px;">❌ Not following you back</h3>
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('notBack')" id="tab-notBack">❌ Not following back</div>
+    <div class="tab" onclick="switchTab('mutual')" id="tab-mutual">✅ Mutual</div>
+  </div>
+
+  <input type="search" placeholder="Search username…" oninput="render()" id="search">
+
   <ul id="result"></ul>
+
+  <br>
+  <button onclick="exportCSV()">Export CSV</button>
+</section>
+
+<section class="card">
+  <h3>About accuracy & safety</h3>
+  <p>This tool uses Instagram’s official data export. It is highly accurate, but may not include changes from the last few hours.</p>
+  <p>FollowScope does not require your Instagram login and runs entirely in your browser.</p>
+
+  <details>
+    <summary>FAQ</summary>
+    <p><b>Is this safe?</b> Yes. No login, no API, no data leaves your device.</p>
+    <p><b>Why not real-time?</b> Instagram does not allow full follower access in real-time safely.</p>
+  </details>
+</section>
+
+<footer>
+  🔒 Your data never leaves your device. FollowScope is not affiliated with Instagram.
+</footer>
+
 </div>
 
 <script>
-let followersHTML = "";
-let followingHTML = "";
+let followersHTML="", followingHTML="";
+let data={notBack:[], mutual:[]}, currentTab="notBack";
 
-document.getElementById("followersFile").onchange = e =>
-  readFile(e.target.files[0], html => followersHTML = html);
+const fInput=document.getElementById("followersFile");
+const foInput=document.getElementById("followingFile");
+const btn=document.getElementById("analyzeBtn");
 
-document.getElementById("followingFile").onchange = e =>
-  readFile(e.target.files[0], html => followingHTML = html);
+fInput.onchange=e=>read(e,h=>followersHTML=h);
+foInput.onchange=e=>read(e,h=>followingHTML=h);
 
-function readFile(file, callback) {
-  const reader = new FileReader();
-  reader.onload = () => callback(reader.result);
-  reader.readAsText(file);
+function read(e,cb){
+  const r=new FileReader();
+  r.onload=()=>{cb(r.result);btn.disabled=!(followersHTML&&followingHTML);};
+  r.readAsText(e.target.files[0]);
 }
 
-/*
-  ✅ This function is the KEY FIX
-  It works for BOTH followers.html and following.html
-*/
-function extractUsernames(html) {
-  const doc = new DOMParser().parseFromString(html, "text/html");
-  const usernames = new Set();
-
-  doc.querySelectorAll("a").forEach(a => {
-    let username = a.textContent.trim();
-
-    // If text is empty or junk, fall back to href
-    if (!username || username.includes("instagram")) {
-      const href = a.getAttribute("href") || "";
-      const match = href.match(/\/([A-Za-z0-9._]+)\/?$/);
-      if (match) username = match[1];
+function extractUsernames(html){
+  const doc=new DOMParser().parseFromString(html,"text/html");
+  const set=new Set();
+  doc.querySelectorAll("a").forEach(a=>{
+    let u=a.textContent.trim();
+    if(!u||u.includes("instagram")){
+      const h=a.getAttribute("href")||"";
+      const m=h.match(/\/([A-Za-z0-9._]+)\/?$/);
+      if(m) u=m[1];
     }
-
-    // Clean and validate
-    if (username) {
-      username = username.replace(/[^A-Za-z0-9._]/g, "");
-      if (username.length > 1) {
-        usernames.add(username);
-      }
-    }
+    if(u){u=u.replace(/[^A-Za-z0-9._]/g,"");if(u.length>1)set.add(u);}
   });
-
-  return [...usernames];
+  return [...set];
 }
 
-function analyze() {
-  if (!followersHTML || !followingHTML) {
-    alert("Please upload both files");
-    return;
-  }
+function analyze(){
+  const followers=new Set(extractUsernames(followersHTML));
+  const following=extractUsernames(followingHTML);
 
-  const followers = new Set(extractUsernames(followersHTML));
-  const following = extractUsernames(followingHTML);
+  data.notBack=following.filter(u=>!followers.has(u));
+  data.mutual=following.filter(u=>followers.has(u));
 
-  const notFollowingBack = following.filter(u => !followers.has(u));
-
-  document.getElementById("stats").innerHTML = `
-    Followers: <b>${followers.size}</b><br>
-    Following: <b>${following.length}</b><br>
-    Not following back: <b style="color:#f87171">${notFollowingBack.length}</b>
+  document.getElementById("stats").innerHTML=`
+    <div class="stat"><span>Followers</span><b>${followers.size}</b></div>
+    <div class="stat"><span>Following</span><b>${following.length}</b></div>
+    <div class="stat"><span>Not following back</span><b style="color:var(--danger)">${data.notBack.length}</b></div>
+    <div class="stat"><span>Mutual</span><b style="color:var(--success)">${data.mutual.length}</b></div>
   `;
+  render();
+}
 
-  const ul = document.getElementById("result");
-  ul.innerHTML = "";
+function switchTab(t){
+  currentTab=t;
+  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+  document.getElementById("tab-"+t).classList.add("active");
+  render();
+}
 
-  notFollowingBack.forEach(user => {
-    const li = document.createElement("li");
-    li.innerHTML = `
-      <a href="https://instagram.com/${user}" target="_blank">${user}</a>
-    `;
-    ul.appendChild(li);
+function render(){
+  const q=document.getElementById("search").value.toLowerCase();
+  const ul=document.getElementById("result");
+  ul.innerHTML="";
+  data[currentTab].filter(u=>u.includes(q)).forEach(u=>{
+    ul.innerHTML+=`<li><a href="https://instagram.com/${u}" target="_blank">${u}</a></li>`;
   });
+}
+
+function exportCSV(){
+  const rows=[["username","type"]];
+  data.notBack.forEach(u=>rows.push([u,"not_following_back"]));
+  data.mutual.forEach(u=>rows.push([u,"mutual"]));
+  const csv=rows.map(r=>r.join(",")).join("\n");
+  const blob=new Blob([csv],{type:"text/csv"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="followscope_results.csv";
+  a.click();
 }
 </script>
 
