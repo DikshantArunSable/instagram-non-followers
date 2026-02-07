@@ -265,100 +265,117 @@ footer{
 </div>
 
 <script>
-let followersHTML=null, followingHTML=null;
-let data={notBack:[],mutual:[]}, tab="notBack";
+let followersHTML = null;
+let followingHTML = null;
+let data = { notBack: [], mutual: [] };
+let currentTab = "notBack";
 
-const f=document.getElementById("followersFile");
-const fo=document.getElementById("followingFile");
-const btn=document.getElementById("analyzeBtn");
+const followersInput = document.getElementById("followersFile");
+const followingInput = document.getElementById("followingFile");
+const analyzeBtn = document.getElementById("analyzeBtn");
 
-f.onchange=()=>readFile(f,file=>followersHTML=file);
-fo.onchange=()=>readFile(fo,file=>followingHTML=file);
+followersInput.addEventListener("change", () => loadFile(followersInput, v => followersHTML = v));
+followingInput.addEventListener("change", () => loadFile(followingInput, v => followingHTML = v));
 
-function readFile(input,cb){
-  const r=new FileReader();
-  r.onload=()=>{cb(r.result);btn.disabled=!(followersHTML&&followingHTML)};
-  r.readAsText(input.files[0]);
+function loadFile(input, cb) {
+  const file = input.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    cb(reader.result);
+    analyzeBtn.disabled = !(followersHTML && followingHTML);
+  };
+  reader.readAsText(file);
 }
 
-btn.onclick = () => {
-  if (!followersHTML || !followingHTML) {
-    alert("Please upload both files first.");
-    return;
+/* ---------- NON-BLOCKING PARSER ---------- */
+function extractUsernamesAsync(html, done) {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const links = Array.from(doc.querySelectorAll("a"));
+  const usernames = new Set();
+  let i = 0;
+
+  function processChunk() {
+    const start = performance.now();
+
+    while (i < links.length && performance.now() - start < 16) {
+      const a = links[i++];
+      let u = a.textContent.trim();
+
+      if (!u || u.includes("instagram")) {
+        const href = a.getAttribute("href") || "";
+        const m = href.match(/\/([A-Za-z0-9._]+)\/?$/);
+        if (m) u = m[1];
+      }
+
+      if (u && u.length > 1) {
+        usernames.add(u.replace(/[^A-Za-z0-9._]/g, ""));
+      }
+    }
+
+    if (i < links.length) {
+      requestAnimationFrame(processChunk);
+    } else {
+      done([...usernames]);
+    }
   }
 
-  btn.disabled = true;
-  const originalText = btn.textContent;
-  btn.textContent = "Analyzing…";
+  processChunk();
+}
 
-  try {
-    analyze();
-  } catch (err) {
-    console.error(err);
-    alert("Something went wrong while analyzing. Please re-upload the files.");
-  } finally {
-    btn.textContent = originalText;
-    btn.disabled = false;
-  }
+/* ---------- ANALYZE ---------- */
+analyzeBtn.onclick = () => {
+  if (!followersHTML || !followingHTML) return;
+
+  analyzeBtn.disabled = true;
+  analyzeBtn.textContent = "Analyzing…";
+
+  extractUsernamesAsync(followersHTML, followers => {
+    extractUsernamesAsync(followingHTML, following => {
+      const followersSet = new Set(followers);
+
+      data.notBack = following.filter(u => !followersSet.has(u));
+      data.mutual = following.filter(u => followersSet.has(u));
+
+      renderStats(followers.length, following.length);
+      renderList();
+
+      analyzeBtn.textContent = "Analyze";
+      analyzeBtn.disabled = false;
+    });
+  });
 };
 
-
-function extract(html){
-  const d=new DOMParser().parseFromString(html,"text/html");
-  const s=new Set();
-  d.querySelectorAll("a").forEach(a=>{
-    let u=a.textContent.trim();
-    if(!u){
-      const m=(a.href||"").match(/\/([A-Za-z0-9._]+)\/?$/);
-      if(m)u=m[1];
-    }
-    if(u)s.add(u.replace(/[^A-Za-z0-9._]/g,""));
-  });
-  return [...s];
-}
-
-function analyze(){
-  if (!followersHTML || !followingHTML) {
-    throw new Error("Files not loaded");
-  }
-
-  const followersList = extract(followersHTML);
-  const followingList = extract(followingHTML);
-
-  if (!followersList.length || !followingList.length) {
-    throw new Error("No usernames parsed");
-  }
-
-  const followers = new Set(followersList);
-
-  data.notBack = followingList.filter(u => !followers.has(u));
-  data.mutual  = followingList.filter(u => followers.has(u));
-
+/* ---------- UI RENDER ---------- */
+function renderStats(fCount, foCount) {
   document.getElementById("stats").innerHTML = `
-    <div class="stat"><span>Followers</span><b>${followers.size}</b></div>
-    <div class="stat"><span>Following</span><b>${followingList.length}</b></div>
+    <div class="stat"><span>Followers</span><b>${fCount}</b></div>
+    <div class="stat"><span>Following</span><b>${foCount}</b></div>
     <div class="stat"><span>Not following back</span><b>${data.notBack.length}</b></div>
     <div class="stat"><span>Mutual</span><b>${data.mutual.length}</b></div>
   `;
-
-  render();
 }
 
-
-function switchTab(t){
-  tab=t;
-  document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
-  document.getElementById("tab-"+t).classList.add("active");
-  render();
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+  document.getElementById("tab-" + tab).classList.add("active");
+  renderList();
 }
 
-function render(){
-  const q=document.getElementById("search").value.toLowerCase();
-  const ul=document.getElementById("result");
-  ul.innerHTML="";
-  data[tab].filter(u=>u.includes(q)).forEach(u=>{
-    ul.innerHTML+=`<li><a href="https://instagram.com/${u}" target="_blank">${u}</a></li>`;
-  });
+function renderList() {
+  const q = document.getElementById("search").value.toLowerCase();
+  const ul = document.getElementById("result");
+  ul.innerHTML = "";
+
+  data[currentTab]
+    .filter(u => u.includes(q))
+    .forEach(u => {
+      const li = document.createElement("li");
+      li.innerHTML = `<a href="https://instagram.com/${u}" target="_blank">${u}</a>`;
+      ul.appendChild(li);
+    });
 }
 </script>
 
