@@ -281,10 +281,27 @@ function readFile(input,cb){
   r.readAsText(input.files[0]);
 }
 
-btn.onclick=()=>{
-  btn.textContent="Analyzing…";
-  setTimeout(()=>{analyze();btn.textContent="Analyze"},300);
+btn.onclick = () => {
+  if (!followersHTML || !followingHTML) {
+    alert("Please upload both files first.");
+    return;
+  }
+
+  btn.disabled = true;
+  const originalText = btn.textContent;
+  btn.textContent = "Analyzing…";
+
+  try {
+    analyze();
+  } catch (err) {
+    console.error(err);
+    alert("Something went wrong while analyzing. Please re-upload the files.");
+  } finally {
+    btn.textContent = originalText;
+    btn.disabled = false;
+  }
 };
+
 
 function extract(html){
   const d=new DOMParser().parseFromString(html,"text/html");
@@ -301,19 +318,32 @@ function extract(html){
 }
 
 function analyze(){
-  const followers=new Set(extract(followersHTML));
-  const following=extract(followingHTML);
-  data.notBack=following.filter(u=>!followers.has(u));
-  data.mutual=following.filter(u=>followers.has(u));
+  if (!followersHTML || !followingHTML) {
+    throw new Error("Files not loaded");
+  }
 
-  document.getElementById("stats").innerHTML=`
+  const followersList = extract(followersHTML);
+  const followingList = extract(followingHTML);
+
+  if (!followersList.length || !followingList.length) {
+    throw new Error("No usernames parsed");
+  }
+
+  const followers = new Set(followersList);
+
+  data.notBack = followingList.filter(u => !followers.has(u));
+  data.mutual  = followingList.filter(u => followers.has(u));
+
+  document.getElementById("stats").innerHTML = `
     <div class="stat"><span>Followers</span><b>${followers.size}</b></div>
-    <div class="stat"><span>Following</span><b>${following.length}</b></div>
+    <div class="stat"><span>Following</span><b>${followingList.length}</b></div>
     <div class="stat"><span>Not following back</span><b>${data.notBack.length}</b></div>
     <div class="stat"><span>Mutual</span><b>${data.mutual.length}</b></div>
   `;
+
   render();
 }
+
 
 function switchTab(t){
   tab=t;
