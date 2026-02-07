@@ -327,26 +327,58 @@ function loadFile(input,cb){
 }
 
 /* -------- Non-blocking parser -------- */
-function extractAsync(html,done){
-  const doc=new DOMParser().parseFromString(html,"text/html");
-  const links=[...doc.querySelectorAll("a")];
-  const set=new Set();
-  let i=0;
+function extractAsync(html, done) {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  const links = [...doc.querySelectorAll("a")];
+  const usernames = new Set();
+  let i = 0;
 
-  function step(){
-    const start=performance.now();
-    while(i<links.length && performance.now()-start<16){
-      let a=links[i++];
-      let u=a.textContent.trim();
-      if(!u){
-        const m=(a.href||"").match(/\/([A-Za-z0-9._]+)\/?$/);
-        if(m)u=m[1];
+  function normalizeUsername(raw) {
+    if (!raw) return null;
+
+    raw = raw.trim();
+
+    // If it's a URL, extract username
+    if (raw.includes("instagram.com")) {
+      try {
+        const parts = raw.split("instagram.com/")[1];
+        if (!parts) return null;
+        raw = parts.split("/")[0];
+      } catch {
+        return null;
       }
-      if(u)set.add(u.replace(/[^A-Za-z0-9._]/g,""));
     }
-    if(i<links.length) requestAnimationFrame(step);
-    else done([...set]);
+
+    // Remove invalid characters
+    raw = raw.replace(/[^A-Za-z0-9._]/g, "");
+
+    return raw.length > 1 ? raw : null;
   }
+
+  function step() {
+    const start = performance.now();
+
+    while (i < links.length && performance.now() - start < 16) {
+      const a = links[i++];
+
+      // Try text content first
+      let u = normalizeUsername(a.textContent);
+
+      // Fallback to href
+      if (!u) {
+        u = normalizeUsername(a.getAttribute("href"));
+      }
+
+      if (u) usernames.add(u);
+    }
+
+    if (i < links.length) {
+      requestAnimationFrame(step);
+    } else {
+      done([...usernames]);
+    }
+  }
+
   step();
 }
 
