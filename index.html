@@ -233,6 +233,57 @@ footer{
   .hero-visual{display:none}
   .upload-grid{grid-template-columns:1fr}
 }
+
+    /* DOWNLOAD STEPS */
+
+.steps-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:16px;
+  margin-top:16px;
+}
+
+.step-card{
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:16px;
+  padding:18px;
+  transition:all .2s ease;
+}
+
+.step-card:hover{
+  background:rgba(255,255,255,0.08);
+  transform:translateY(-2px);
+}
+
+.step-number{
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#4cc9f0,#9d4edd);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:600;
+  color:#000;
+  margin-bottom:10px;
+}
+
+.step-card h4{
+  margin:0 0 6px 0;
+}
+
+.step-card p{
+  font-size:14px;
+  color:var(--muted);
+}
+
+.step-card code{
+  background:rgba(0,0,0,0.4);
+  padding:3px 6px;
+  border-radius:6px;
+  font-size:13px;
+}
 </style>
 </head>
 
@@ -258,6 +309,59 @@ footer{
   <div class="hero-visual">
   <img src="social-analytics.png" alt="Social media analytics illustration">
   </div>
+</section>
+
+  <!-- HOW TO DOWNLOAD INSTAGRAM DATA -->
+<section class="card" id="how-it-works">
+
+  <h3>How to download your Instagram data</h3>
+  <p style="color:var(--muted); margin-bottom:18px;">
+    Follow these steps to download your official Instagram data export.
+    FollowScope uses this file to safely analyze who doesn't follow you back.
+  </p>
+
+  <div class="steps-grid">
+
+    <div class="step-card">
+      <div class="step-number">1</div>
+      <h4>Open Instagram Settings</h4>
+      <p>
+        Go to Instagram → Settings → <b>Accounts Center</b>.
+      </p>
+    </div>
+
+    <div class="step-card">
+      <div class="step-number">2</div>
+      <h4>Download Your Information</h4>
+      <p>
+        Navigate to:<br>
+        <b>Your information → Download your information</b>
+      </p>
+    </div>
+
+    <div class="step-card">
+      <div class="step-number">3</div>
+      <h4>Select Format</h4>
+      <p>
+        Choose:<br>
+        <b>HTML format</b><br>
+        and request the download.
+      </p>
+    </div>
+
+    <div class="step-card">
+      <div class="step-number">4</div>
+      <h4>Extract the Files</h4>
+      <p>
+        After downloading the ZIP file, extract it and locate:
+        <br><br>
+        <code>followers_1.html</code><br>
+        <code>following.html</code>
+      </p>
+    </div>
+
+  </div>
+
 </section>
 
 <section class="card" id="analyzer">
