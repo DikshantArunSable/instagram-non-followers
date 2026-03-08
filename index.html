@@ -456,6 +456,10 @@ function analyze(){
     <div class="stat"><span>Mutual</span><b>${data.mutual.length}</b></div>
   `;
   render();
+  gtag('event', 'analyze_clicked', {
+  event_category: 'tool',
+  event_label: 'follow_analyzer'
+});
 }
 
 btn.onclick=analyze;
